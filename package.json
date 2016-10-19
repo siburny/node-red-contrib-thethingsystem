@@ -1,0 +1,12 @@
+{
+    "name"         : "node-red-contrib-thethingsystem",
+    "version"      : "0.0.1",
+    "description"  : "A set of nodes for The Thing System",
+    "dependencies": {
+    },
+    "node-red"     : {
+        "nodes": {
+            "sample": "sample/sample.js"
+        }
+    }
+}
