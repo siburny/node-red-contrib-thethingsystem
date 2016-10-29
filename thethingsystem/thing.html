@@ -1,0 +1,22 @@
+<script type="text/javascript">
+RED.nodes.registerType('thing',
+  {
+    icon: 'light.png',
+    paletteLabel: 'Thing',
+    category: 'Steward',
+    defaults: {
+      name: {value:""},
+      server: { value:"", type: 'steward-server' }
+    },
+    label: function() {
+      return this.name;
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="thing">
+    <div class="form-row">
+        <label for="node-config-input-server"><i class="icon-bookmark"></i> Server</label>
+        <input type="text" id="node-config-input-server">
+    </div>
+</script>

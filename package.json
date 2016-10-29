@@ -1,12 +1,20 @@
 {
-    "name"         : "node-red-contrib-thethingsystem",
-    "version"      : "0.0.1",
-    "description"  : "A set of nodes for The Thing System",
-    "dependencies": {
-    },
-    "node-red"     : {
-        "nodes": {
-            "sample": "thethingsystem/thethingsystem.js"
-        }
+  "name": "node-red-contrib-thethingsystem",
+  "version": "0.0.1",
+  "description": "A set of nodes for The Thing System",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/siburny/node-red-contrib-thethingsystem.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/siburny/node-red-contrib-thethingsystem/issues"
+  },
+  "node-red": {
+    "nodes": {
+      "steward-server": "thethingsystem/steward-server.js",
+      "thing": "thethingsystem/thing.js"
     }
+  }
 }
