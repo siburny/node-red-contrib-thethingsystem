@@ -1,22 +1,59 @@
 <script type="text/javascript">
 RED.nodes.registerType('thing',
   {
+    color: '#6bbf56',
     icon: 'light.png',
-    paletteLabel: 'Thing',
+    paletteLabel: 'thing',
     category: 'Steward',
     defaults: {
-      name: {value:""},
-      server: { value:"", type: 'steward-server' }
+      server: { type: 'steward-server', required: true },
+      thing: { value: '', required: true },
+      name: { value: '' }
     },
+    inputs: 1,
     label: function() {
-      return this.name;
+      return this.name || "thing";
+    },
+    oneditprepare: function() {
+      refreshThings();
+      
+      $('#node-config-refresh-things').on('click', refreshThings);
+      $('#node-config-thing').on('change', function() {
+        $('#node-input-thing').val($("#node-config-thing option:selected").val());
+        $('#node-input-name').val($("#node-config-thing option:selected").text());
+      });
     }
   });
+
+function refreshThings() {
+  var id = $('#node-input-thing').val();
+
+  $.getJSON('/steward/devices', function(data){
+    $sel = $('#node-config-thing');
+    $sel.empty();
+    $sel.append('<option value="">Select a thing</option>')
+    for(var d in data) {
+      $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data[d].name + '</option>');
+    }
+    $('#node-input-thing').val();
+  });
+}
 </script>
 
 <script type="text/x-red" data-template-name="thing">
-    <div class="form-row">
-        <label for="node-config-input-server"><i class="icon-bookmark"></i> Server</label>
-        <input type="text" id="node-config-input-server">
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
+    <input type="text" id="node-input-server">
+  </div>
+  <div class="form-row">
+    <label for="node-config-thing"><i class="fa fa-lightbuld-o"></i> Name</label>
+    <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+      <div style="position: absolute; left: 0px; right: 40px;">
+        <select id="node-config-thing" style="width: 100%"></select>    
+      </div>
+      <a id="node-config-refresh-things" class="editor-button" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-refresh"></i></a>
+      <input type="hidden" id="node-input-thing"/>
+      <input type="hidden" id="node-input-name"/>  
     </div>
+  </div>
 </script>
