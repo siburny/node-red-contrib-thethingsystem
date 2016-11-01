@@ -15,15 +15,51 @@ RED.nodes.registerType('thing',
       return this.name || "thing";
     },
     oneditprepare: function() {
-      refreshThings();
-      
-      $('#node-config-refresh-things').on('click', refreshThings);
+      $('#node-input-server').on('change', function() {
+        if($('#node-input-server option:selected').text()) {
+          stewardRefresh($('#node-input-server option:selected').text());
+        }
+      })
+
+      $('#node-config-refresh-things').on('click', stewardRefresh);
       $('#node-config-thing').on('change', function() {
         $('#node-input-thing').val($("#node-config-thing option:selected").val());
         $('#node-input-name').val($("#node-config-thing option:selected").text());
       });
     }
   });
+
+function stewardRefresh(host) {
+  var ws = new WebSocket('ws://' + host + ':8887/manage');
+  console.log("Created websocket.");
+
+  ws.onopen = function(event) {
+    console.log("Opened websocket to steward.");
+    var json = JSON.stringify({
+      path      : '/api/v1/device/list/',
+      requestID :'1'
+    });
+    ws.send(json);
+  };
+
+  ws.onmessage = function(event) {
+    var str = JSON.stringify(JSON.parse(event.data), null, 2);
+    console.log("Socket message: " + str);
+    ws.close();
+  };
+
+  ws.onclose = function(event) {
+    console.log("Socket closed: " + event.wasClean );
+  };
+
+  ws.onerror = function(event) {
+    console.log("Socket error: ", event);
+    try { 
+      ws.close (); 
+      console.log("Closed websocket.");
+    } catch (ex) {}
+  };
+}
 
 function refreshThings() {
   var id = $('#node-input-thing').val();

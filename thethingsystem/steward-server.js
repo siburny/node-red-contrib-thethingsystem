@@ -9,6 +9,7 @@ module.exports = function (RED) {
 
     node.host = n.host;
     node.connected = false;
+
     node.steward = new ClientAPI.ClientAPI({
       steward: { name: node.host },
       logger: {
@@ -27,8 +28,9 @@ module.exports = function (RED) {
       console.log('error');
     });
 
+    console.log("Reg!");
     RED.httpAdmin.get('/steward/devices', function (req, res) {
-      if (!node.connected)
+      if (!node.connected || !node.steward)
         return [];
 
       node.steward.listDevice('', { depth: 'all' }, function (data) {
@@ -38,6 +40,11 @@ module.exports = function (RED) {
           res.json([]);
         }
       });
+    });
+
+    node.on('close', function() {
+      node.connected = false;
+      delete node.steward;
     });
   }
 
