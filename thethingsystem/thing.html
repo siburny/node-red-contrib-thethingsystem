@@ -16,12 +16,19 @@ RED.nodes.registerType('thing',
     },
     oneditprepare: function() {
       $('#node-input-server').on('change', function() {
-        if($('#node-input-server option:selected').text()) {
+        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+          $('#form-row-thing').show();
           stewardRefresh($('#node-input-server option:selected').text());
+        } else {
+          $('#form-row-thing').hide();
         }
       })
 
-      $('#node-config-refresh-things').on('click', stewardRefresh);
+      $('#node-config-refresh-things').on('click', function() {
+        if($('#node-input-server option:selected').text()) {
+          stewardRefresh($('#node-input-server option:selected').text());
+        }
+      });
       $('#node-config-thing').on('change', function() {
         $('#node-input-thing').val($("#node-config-thing option:selected").val());
         $('#node-input-name').val($("#node-config-thing option:selected").text());
@@ -31,10 +38,8 @@ RED.nodes.registerType('thing',
 
 function stewardRefresh(host) {
   var ws = new WebSocket('ws://' + host + ':8887/manage');
-  console.log("Created websocket.");
 
   ws.onopen = function(event) {
-    console.log("Opened websocket to steward.");
     var json = JSON.stringify({
       path      : '/api/v1/device/list/',
       requestID :'1'
@@ -43,36 +48,27 @@ function stewardRefresh(host) {
   };
 
   ws.onmessage = function(event) {
-    var str = JSON.stringify(JSON.parse(event.data), null, 2);
-    console.log("Socket message: " + str);
+    if(event.data) {
+      var data = JSON.parse(event.data);
+      if(!!data && !!data.result && !!data.result.devices) {
+        $sel = $('#node-config-thing');
+        $sel.empty();
+        $sel.append('<option value="">Select a Thing</option>')
+        for(var d in data.result.devices) {
+          $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data[d].name + '</option>');
+        }
+        $('#node-input-thing').val();
+      }
+    }
     ws.close();
-  };
-
-  ws.onclose = function(event) {
-    console.log("Socket closed: " + event.wasClean );
   };
 
   ws.onerror = function(event) {
     console.log("Socket error: ", event);
     try { 
       ws.close (); 
-      console.log("Closed websocket.");
     } catch (ex) {}
   };
-}
-
-function refreshThings() {
-  var id = $('#node-input-thing').val();
-
-  $.getJSON('/steward/devices', function(data){
-    $sel = $('#node-config-thing');
-    $sel.empty();
-    $sel.append('<option value="">Select a thing</option>')
-    for(var d in data) {
-      $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data[d].name + '</option>');
-    }
-    $('#node-input-thing').val();
-  });
 }
 </script>
 
@@ -81,7 +77,7 @@ function refreshThings() {
     <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
     <input type="text" id="node-input-server">
   </div>
-  <div class="form-row">
+  <div class="form-row" id="form-row-thing">
     <label for="node-config-thing"><i class="fa fa-lightbuld-o"></i> Name</label>
     <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
       <div style="position: absolute; left: 0px; right: 40px;">

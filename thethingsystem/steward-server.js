@@ -28,20 +28,6 @@ module.exports = function (RED) {
       console.log('error');
     });
 
-    console.log("Reg!");
-    RED.httpAdmin.get('/steward/devices', function (req, res) {
-      if (!node.connected || !node.steward)
-        return [];
-
-      node.steward.listDevice('', { depth: 'all' }, function (data) {
-        if (!!data && !!data.result && !!data.result.devices) {
-          res.json(data.result.devices);
-        } else {
-          res.json([]);
-        }
-      });
-    });
-
     node.on('close', function() {
       node.connected = false;
       delete node.steward;
