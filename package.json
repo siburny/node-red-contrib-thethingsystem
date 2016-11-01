@@ -3,7 +3,8 @@
   "version": "0.0.2",
   "description": "A set of nodes for The Thing System",
   "dependencies": {
-    "when": "^3.7.7"
+    "when": "^3.7.7",
+    "taas-client": "siburny/node-taas-client"
   },
   "repository": {
     "type": "git",
