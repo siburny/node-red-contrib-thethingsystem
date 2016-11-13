@@ -1,0 +1,35 @@
+<script type="text/javascript">
+RED.nodes.registerType('status-check',
+  {
+    color: '#6bbf56',
+    icon: 'light.png',
+    paletteLabel: 'If Then Else',
+    category: 'Steward',
+    defaults: {
+      name: { value: '' },
+      if: { value: '', required: true },
+      then : { value: '' },
+      else: { value: '' }
+    },
+    inputs: 1,
+    outputs: 2,
+    label: function() {
+      return this.name || "status check";
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="status-check">
+  <div class="form-row">
+    <label for="node-input-if">If Status is </label>
+    <input type="text" id="node-input-if">
+  </div>
+  <div class="form-row">
+    <label for="node-input-then">Then perform</label>
+    <input type="text" id="node-input-then">
+  </div>
+  <div class="form-row">
+    <label for="node-input-else">Else perform</label>
+    <input type="text" id="node-input-else">
+  </div>
+</script>

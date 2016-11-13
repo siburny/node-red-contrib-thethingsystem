@@ -1,9 +1,9 @@
 <script type="text/javascript">
-RED.nodes.registerType('thing',
+RED.nodes.registerType('thing-perform',
   {
     color: '#6bbf56',
     icon: 'light.png',
-    paletteLabel: 'thing',
+    paletteLabel: 'thing perform',
     category: 'Steward',
     defaults: {
       server: { type: 'steward-server', required: true },
@@ -12,7 +12,83 @@ RED.nodes.registerType('thing',
     },
     inputs: 1,
     label: function() {
-      return this.name || "thing";
+      return this.name || "thing perform";
+    },
+    oneditprepare: function() {
+      $('#node-input-server').on('change', function() {
+        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+          $('#form-row-thing').show();
+          stewardRefresh($('#node-input-server option:selected').text());
+        } else {
+          $('#form-row-thing').hide();
+        }
+      })
+
+      $('#node-config-refresh-things').on('click', function() {
+        if($('#node-input-server option:selected').text()) {
+          stewardRefresh($('#node-input-server option:selected').text());
+        }
+      });
+      $('#node-config-thing').on('change', function() {
+        $('#node-input-thing').val($("#node-config-thing option:selected").val());
+        $('#node-input-name').val($("#node-config-thing option:selected").text());
+      });
+    }
+  });
+
+RED.nodes.registerType('thing-event',
+  {
+    color: '#87A980',
+    icon: 'inject.png',
+    paletteLabel: 'thing event',
+    category: 'Steward',
+    defaults: {
+      server: { type: 'steward-server', required: true },
+      thing: { value: '', required: true },
+      name: { value: '' }
+    },
+    align: 'right',
+    outputs: 1,
+    label: function() {
+      return this.name || "thing event";
+    },
+    oneditprepare: function() {
+      $('#node-input-server').on('change', function() {
+        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+          $('#form-row-thing').show();
+          stewardRefresh($('#node-input-server option:selected').text());
+        } else {
+          $('#form-row-thing').hide();
+        }
+      })
+
+      $('#node-config-refresh-things').on('click', function() {
+        if($('#node-input-server option:selected').text()) {
+          stewardRefresh($('#node-input-server option:selected').text());
+        }
+      });
+      $('#node-config-thing').on('change', function() {
+        $('#node-input-thing').val($("#node-config-thing option:selected").val());
+        $('#node-input-name').val($("#node-config-thing option:selected").text());
+      });
+    }
+  });
+
+RED.nodes.registerType('thing-status',
+  {
+    color: '#87A980',
+    icon: 'inject.png',
+    paletteLabel: 'thing status',
+    category: 'Steward',
+    defaults: {
+      server: { type: 'steward-server', required: true },
+      thing: { value: '', required: true },
+      name: { value: '' }
+    },
+    inputs: 1,
+    outputs: 1,
+    label: function() {
+      return this.name || "thing status";
     },
     oneditprepare: function() {
       $('#node-input-server').on('change', function() {
@@ -51,11 +127,12 @@ function stewardRefresh(host) {
     if(event.data) {
       var data = JSON.parse(event.data);
       if(!!data && !!data.result && !!data.result.devices) {
-        $sel = $('#node-config-thing');
+        var id = $('#node-input-thing').val();
+        var $sel = $('#node-config-thing');
         $sel.empty();
         $sel.append('<option value="">Select a Thing</option>')
         for(var d in data.result.devices) {
-          $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data[d].name + '</option>');
+          $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data.result.devices[d].name + '</option>');
         }
         $('#node-input-thing').val();
       }
@@ -72,7 +149,43 @@ function stewardRefresh(host) {
 }
 </script>
 
-<script type="text/x-red" data-template-name="thing">
+<script type="text/x-red" data-template-name="thing-perform">
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
+    <input type="text" id="node-input-server">
+  </div>
+  <div class="form-row" id="form-row-thing">
+    <label for="node-config-thing"><i class="fa fa-lightbuld-o"></i> Name</label>
+    <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+      <div style="position: absolute; left: 0px; right: 40px;">
+        <select id="node-config-thing" style="width: 100%"></select>    
+      </div>
+      <a id="node-config-refresh-things" class="editor-button" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-refresh"></i></a>
+      <input type="hidden" id="node-input-thing"/>
+      <input type="hidden" id="node-input-name"/>  
+    </div>
+  </div>
+</script>
+
+<script type="text/x-red" data-template-name="thing-event">
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
+    <input type="text" id="node-input-server">
+  </div>
+  <div class="form-row" id="form-row-thing">
+    <label for="node-config-thing"><i class="fa fa-lightbuld-o"></i> Name</label>
+    <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+      <div style="position: absolute; left: 0px; right: 40px;">
+        <select id="node-config-thing" style="width: 100%"></select>    
+      </div>
+      <a id="node-config-refresh-things" class="editor-button" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-refresh"></i></a>
+      <input type="hidden" id="node-input-thing"/>
+      <input type="hidden" id="node-input-name"/>  
+    </div>
+  </div>
+</script>
+
+<script type="text/x-red" data-template-name="thing-status">
   <div class="form-row">
     <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
     <input type="text" id="node-input-server">

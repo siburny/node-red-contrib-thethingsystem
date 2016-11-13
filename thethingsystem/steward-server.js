@@ -23,13 +23,12 @@ module.exports = function (RED) {
       if (channel !== 'management') return;
       node.connected = true;
     }).on('close', function (channel) {
-      console.log('close');
     }).on('error', function (err, channel) {
-      console.log('error');
     });
 
     node.on('close', function() {
       node.connected = false;
+      node.steward.close();
       delete node.steward;
     });
   }

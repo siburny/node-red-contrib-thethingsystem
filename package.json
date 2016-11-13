@@ -17,6 +17,7 @@
   "node-red": {
     "nodes": {
       "thing": "thethingsystem/thing.js",
+      "status-check": "thethingsystem/status-check.js",
       "steward-server": "thethingsystem/steward-server.js"
     }
   }
