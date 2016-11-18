@@ -9,7 +9,6 @@ module.exports = function (RED) {
 
     this.on('input', function (msg) {
       if (!!node.server && !!node.server.connected) {
-        console.log(node);
         node.server.steward.performDevice(node.thing, msg.payload, {}, function () { });
         if (msg.payload === 'on') {
           node.status({ fill: 'green', shape: 'dot', text: 'ON' });
@@ -32,8 +31,13 @@ module.exports = function (RED) {
     if (!!node.server) {
       node.server.steward.removeAllListeners('actor');
       node.server.steward.on('actor', function (entry) {
-        entry.payload = entry.status;
-        node.send(entry);
+        if (!!entry && !!entry.whoami) {
+          var deviceId = entry.whoami.replace('device/', '');
+          if (deviceId == node.thing) {
+            entry.payload = entry.status;
+            node.send(entry);
+          }
+        }
       });
     }
   }
