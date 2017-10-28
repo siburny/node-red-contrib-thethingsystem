@@ -1,152 +1,131 @@
 <script type="text/javascript">
-RED.nodes.registerType('thing-perform',
-  {
-    color: '#6bbf56',
-    icon: 'light.png',
-    paletteLabel: 'thing perform',
-    category: 'Steward',
-    defaults: {
-      server: { type: 'steward-server', required: true },
-      thing: { value: '', required: true },
-      name: { value: '' }
-    },
-    inputs: 1,
-    label: function() {
-      return this.name || "thing perform";
-    },
-    oneditprepare: function() {
-      $('#node-input-server').on('change', function() {
-        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
-          $('#form-row-thing').show();
-          stewardRefresh($('#node-input-server option:selected').text());
-        } else {
-          $('#form-row-thing').hide();
-        }
-      })
+  RED.nodes.registerType('thing-perform',
+    {
+      color: '#6bbf56',
+      icon: 'light.png',
+      paletteLabel: 'thing perform',
+      category: 'Steward',
+      defaults: {
+        server: { type: 'steward-server', required: true },
+        thing: { value: '', required: true },
+        name: { value: '' }
+      },
+      inputs: 1,
+      label: function () {
+        return this.name || "thing perform";
+      },
+      oneditprepare: function () {
+        $('#node-input-server').on('change', function () {
+          if ($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+            $('#form-row-thing').show();
+            stewardRefresh($('#node-input-server option:selected').text());
+          } else {
+            $('#form-row-thing').hide();
+          }
+        })
 
-      $('#node-config-refresh-things').on('click', function() {
-        if($('#node-input-server option:selected').text()) {
-          stewardRefresh($('#node-input-server option:selected').text());
-        }
-      });
-      $('#node-config-thing').on('change', function() {
-        $('#node-input-thing').val($("#node-config-thing option:selected").val());
-        $('#node-input-name').val($("#node-config-thing option:selected").text());
-      });
-    }
-  });
-
-RED.nodes.registerType('thing-event',
-  {
-    color: '#87A980',
-    icon: 'inject.png',
-    paletteLabel: 'thing event',
-    category: 'Steward',
-    defaults: {
-      server: { type: 'steward-server', required: true },
-      thing: { value: '', required: true },
-      name: { value: '' }
-    },
-    align: 'right',
-    outputs: 1,
-    label: function() {
-      return this.name || "thing event";
-    },
-    oneditprepare: function() {
-      $('#node-input-server').on('change', function() {
-        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
-          $('#form-row-thing').show();
-          stewardRefresh($('#node-input-server option:selected').text());
-        } else {
-          $('#form-row-thing').hide();
-        }
-      })
-
-      $('#node-config-refresh-things').on('click', function() {
-        if($('#node-input-server option:selected').text()) {
-          stewardRefresh($('#node-input-server option:selected').text());
-        }
-      });
-      $('#node-config-thing').on('change', function() {
-        $('#node-input-thing').val($("#node-config-thing option:selected").val());
-        $('#node-input-name').val($("#node-config-thing option:selected").text());
-      });
-    }
-  });
-
-RED.nodes.registerType('thing-status',
-  {
-    color: '#87A980',
-    icon: 'inject.png',
-    paletteLabel: 'thing status',
-    category: 'Steward',
-    defaults: {
-      server: { type: 'steward-server', required: true },
-      thing: { value: '', required: true },
-      name: { value: '' }
-    },
-    inputs: 1,
-    outputs: 1,
-    label: function() {
-      return this.name || "thing status";
-    },
-    oneditprepare: function() {
-      $('#node-input-server').on('change', function() {
-        if($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
-          $('#form-row-thing').show();
-          stewardRefresh($('#node-input-server option:selected').text());
-        } else {
-          $('#form-row-thing').hide();
-        }
-      })
-
-      $('#node-config-refresh-things').on('click', function() {
-        if($('#node-input-server option:selected').text()) {
-          stewardRefresh($('#node-input-server option:selected').text());
-        }
-      });
-      $('#node-config-thing').on('change', function() {
-        $('#node-input-thing').val($("#node-config-thing option:selected").val());
-        $('#node-input-name').val($("#node-config-thing option:selected").text());
-      });
-    }
-  });
-
-function stewardRefresh(host) {
-  var ws = new WebSocket('ws://' + host + ':8887/manage');
-
-  ws.onopen = function(event) {
-    var json = JSON.stringify({
-      path      : '/api/v1/device/list/',
-      requestID :'1'
+        $('#node-config-refresh-things').on('click', function () {
+          if ($('#node-input-server option:selected').text()) {
+            stewardRefresh($('#node-input-server option:selected').text());
+          }
+        });
+        $('#node-config-thing').on('change', function () {
+          $('#node-input-thing').val($("#node-config-thing option:selected").val());
+          $('#node-input-name').val($("#node-config-thing option:selected").text());
+        });
+      }
     });
-    ws.send(json);
-  };
 
-  ws.onmessage = function(event) {
-    if(event.data) {
-      var data = JSON.parse(event.data);
-      if(!!data && !!data.result && !!data.result.devices) {
+  RED.nodes.registerType('thing-event',
+    {
+      color: '#87A980',
+      icon: 'inject.png',
+      paletteLabel: 'thing event',
+      category: 'Steward',
+      defaults: {
+        server: { type: 'steward-server', required: true },
+        thing: { value: '', required: true },
+        name: { value: '' }
+      },
+      align: 'right',
+      outputs: 1,
+      label: function () {
+        return this.name || "thing event";
+      },
+      oneditprepare: function () {
+        $('#node-input-server').on('change', function () {
+          if ($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+            $('#form-row-thing').show();
+            stewardRefresh($('#node-input-server option:selected').text());
+          } else {
+            $('#form-row-thing').hide();
+          }
+        })
+
+        $('#node-config-refresh-things').on('click', function () {
+          if ($('#node-input-server option:selected').text()) {
+            stewardRefresh($('#node-input-server option:selected').text());
+          }
+        });
+        $('#node-config-thing').on('change', function () {
+          $('#node-input-thing').val($("#node-config-thing option:selected").val());
+          $('#node-input-name').val($("#node-config-thing option:selected").text());
+        });
+      }
+    });
+
+  RED.nodes.registerType('thing-status',
+    {
+      color: '#87A980',
+      icon: 'inject.png',
+      paletteLabel: 'thing status',
+      category: 'Steward',
+      defaults: {
+        server: { type: 'steward-server', required: true },
+        thing: { value: '', required: true },
+        name: { value: '' }
+      },
+      inputs: 1,
+      outputs: 1,
+      label: function () {
+        return this.name || "thing status";
+      },
+      oneditprepare: function () {
+        $('#node-input-server').on('change', function () {
+          if ($('#node-input-server option:selected').text() && $('#node-input-server option:selected').val() !== '_ADD_') {
+            $('#form-row-thing').show();
+            stewardRefresh($('#node-input-server option:selected').text());
+          } else {
+            $('#form-row-thing').hide();
+          }
+        })
+
+        $('#node-config-refresh-things').on('click', function () {
+          if ($('#node-input-server option:selected').text()) {
+            stewardRefresh($('#node-input-server option:selected').text());
+          }
+        });
+        $('#node-config-thing').on('change', function () {
+          $('#node-input-thing').val($("#node-config-thing option:selected").val());
+          $('#node-input-name').val($("#node-config-thing option:selected").text());
+        });
+      }
+    });
+
+  function stewardRefresh(host) {
+    $.getJSON('/red/stewardListDevices', function (data) {
+      if (!!data && !!data.result && !!data.result.devices) {
         var id = $('#node-input-thing').val();
         var $sel = $('#node-config-thing');
         $sel.empty();
         $sel.append('<option value="">Select a Thing</option>')
-        for(var d in data.result.devices) {
+        for (var d in data.result.devices) {
           $sel.append('<option value="' + d.replace('device/', '') + '"' + (id == d.replace('device/', '') ? ' selected="true"' : '') + '>' + data.result.devices[d].name + '</option>');
         }
         $('#node-input-thing').val();
       }
-    }
-    ws.close();
-  };
-
-  ws.onerror = function(event) {
-    console.log("Socket error: ", event);
-    try { 
-      ws.close (); 
-    } catch (ex) {}
-  };
-}
+    });
+  }
 </script>
 
 <script type="text/x-red" data-template-name="thing-perform">
