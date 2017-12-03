@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-thethingsystem",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A set of nodes for The Thing System",
   "dependencies": {
     "when": "^3.7.7",
@@ -20,5 +20,9 @@
       "status-check": "thethingsystem/status-check.js",
       "steward-server": "thethingsystem/steward-server.js"
     }
-  }
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "author": "Maxim Rubis <siburny+github@gmail.com>"
 }

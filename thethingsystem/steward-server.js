@@ -23,8 +23,11 @@ module.exports = function (RED) {
     }).on('ready', function (channel, data) {
       if (channel !== 'management') return;
       node.connected = true;
+      RED.log.info('Steward is connected.');
     }).on('close', function (channel) {
+      RED.log.info('Steward closed connection.');
     }).on('error', function (err, channel) {
+      RED.log.info('Steward errored out: ' + err.message);
     });
 
     node.on('close', function () {
@@ -38,8 +41,8 @@ module.exports = function (RED) {
 
   RED.httpAdmin.get("/stewardListDevices", RED.auth.needsPermission("steward-server.write"), function (req, res) {
     if (steward && steward.readyP) {
-      steward.listDevice('', {}, function(data) {
-        if(data) {
+      steward.listDevice('', {}, function (data) {
+        if (data) {
           res.json(data);
         } else {
           res.sendStatus(404);
