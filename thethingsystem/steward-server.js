@@ -11,30 +11,38 @@ module.exports = function (RED) {
     node.host = n.host;
     node.connected = false;
 
-    steward = node.steward = new ClientAPI.ClientAPI({
-      steward: { name: node.host },
-      logger: {
-        error: function (msg, props) { }
-        , warning: function (msg, props) { }
-        , notice: function (msg, props) { }
-        , info: function (msg, props) { }
-        , debug: function (msg, props) { }
-      }
-    }).on('ready', function (channel, data) {
-      if (channel !== 'management') return;
-      node.connected = true;
-      RED.log.info('Steward is connected.');
-    }).on('close', function (channel) {
-      RED.log.info('Steward closed connection.');
-    }).on('error', function (err, channel) {
-      RED.log.info('Steward errored out: ' + err.message);
-    });
+    function connect() {
+      setTimeout(function () {
+        steward = node.steward = new ClientAPI.ClientAPI({
+          steward: { name: node.host },
+          logger: {
+            error: function (msg, props) { }
+            , warning: function (msg, props) { }
+            , notice: function (msg, props) { }
+            , info: function (msg, props) { }
+            , debug: function (msg, props) { }
+          }
+        }).on('ready', function (channel, data) {
+          if (channel !== 'management') return;
+          node.connected = true;
+          RED.log.info('Steward is connected.');
+        }).on('close', function (channel) {
+          RED.log.info('Steward closed connection.');
+          connect();
+        }).on('error', function (err, channel) {
+          RED.log.info('Steward errored out: ' + err.message);
+          connect();
+        });
 
-    node.on('close', function () {
-      node.connected = false;
-      node.steward.close();
-      delete node.steward;
-    });
+        node.on('close', function () {
+          node.connected = false;
+          node.steward.close();
+          delete node.steward;
+        });
+      }, 10);
+    }
+
+    connect();
   }
 
   RED.nodes.registerType('steward-server', StewardServerNode);
